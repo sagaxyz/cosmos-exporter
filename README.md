@@ -47,7 +47,7 @@ User=<username>
 TimeoutStartSec=0
 CPUWeight=95
 IOWeight=95
-ExecStart=cosmos-exporter
+ExecStart=cosmos-exporter --bech-account-prefix saga --bech-account-pubkey-prefix=sagapub --bech-consensus-node-prefix=sagavalcons --bech-consensus-node-pubkey-prefix=sagavalconspub --bech-validator-prefix=sagavaloper --bech-validator-pubkey-prefix=sagavaloperpub --denom utsaga --node <ip>:9090
 Restart=always
 RestartSec=2
 LimitNOFILE=800000
