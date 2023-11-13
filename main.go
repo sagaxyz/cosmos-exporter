@@ -13,7 +13,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	tmrpc "github.com/tendermint/tendermint/rpc/client/http"
 	"google.golang.org/grpc"
 )
 
@@ -135,6 +134,7 @@ func Execute(cmd *cobra.Command, args []string) {
 		Str("--bech-validator-pubkey-prefix", ValidatorPubkeyPrefix).
 		Str("--bech-consensus-node-prefix", ConsensusNodePrefix).
 		Str("--bech-consensus-node-pubkey-prefix", ConsensusNodePubkeyPrefix).
+		Str("--chain-id", ChainID).
 		Str("--denom", Denom).
 		Str("--denom-cofficient", fmt.Sprintf("%f", DenomCoefficient)).
 		Str("--denom-exponent", fmt.Sprintf("%d", DenomExponent)).
@@ -157,7 +157,6 @@ func Execute(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Could not connect to gRPC node")
 	}
 
-	setChainID()
 	setDenom(grpcConn)
 
 	http.HandleFunc("/metrics/wallet", func(w http.ResponseWriter, r *http.Request) {
@@ -184,24 +183,6 @@ func Execute(cmd *cobra.Command, args []string) {
 	err = http.ListenAndServe(ListenAddress, nil)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Could not start application")
-	}
-}
-
-func setChainID() {
-	client, err := tmrpc.New(TendermintRPC, "/websocket")
-	if err != nil {
-		log.Fatal().Err(err).Msg("Could not create Tendermint client")
-	}
-
-	status, err := client.Status(context.Background())
-	if err != nil {
-		log.Fatal().Err(err).Msg("Could not query Tendermint status")
-	}
-
-	log.Info().Str("network", status.NodeInfo.Network).Msg("Got network status from Tendermint")
-	ChainID = status.NodeInfo.Network
-	ConstLabels = map[string]string{
-		"chain_id": ChainID,
 	}
 }
 
@@ -282,6 +263,7 @@ func checkAndHandleDenomInfoProvidedByUser() bool {
 
 func main() {
 	rootCmd.PersistentFlags().StringVar(&ConfigPath, "config", "", "Config file path")
+	rootCmd.PersistentFlags().StringVar(&ChainID, "chain-id", "", "Cosmos chain id")
 	rootCmd.PersistentFlags().StringVar(&Denom, "denom", "", "Cosmos coin denom")
 	rootCmd.PersistentFlags().Float64Var(&DenomCoefficient, "denom-coefficient", 1, "Denom coefficient")
 	rootCmd.PersistentFlags().Uint64Var(&DenomExponent, "denom-exponent", 0, "Denom exponent")
