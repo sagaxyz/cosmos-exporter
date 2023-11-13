@@ -1,0 +1,1057 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: alerts evaluation group
+      folder: alert rules
+      interval: 1m
+      rules:
+        - uid: b513844c-aab6-4e9a-8a43-5c1dc472a1d8
+          title: Relayer is up
+          condition: threshold
+          data:
+            - refId: relayer_is_up
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: up{job="Relayer"}
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: relayer_is_up
+                useBackend: false
+            - refId: relayer_is_up_last
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: relayer_is_up
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: relayer_is_up_last
+                type: reduce
+            - refId: threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: relayer_is_up_last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: threshold
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: Relayer is unavailable
+          isPaused: false
+        - uid: e8bebdb1-15c2-435f-ba3c-0d6f22ea2055
+          title: Osmosis relayer wallet balance is positive
+          condition: threshold
+          data:
+            - refId: osmosis_relayer_wallet_balance
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: cosmos_relayer_wallet_balance{job="Relayer", chain="osmo-test-5"}
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: osmosis_relayer_wallet_balance
+                useBackend: false
+            - refId: osmosis_relayer_wallet_balance_last_value
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: osmosis_relayer_wallet_balance
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: osmosis_relayer_wallet_balance_last_value
+                type: reduce
+            - refId: threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: osmosis_relayer_wallet_balance_last_value
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: threshold
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: Osmosis relayer wallet balance is zero
+          isPaused: false
+        - uid: d3f38e20-6eaf-4355-856d-258933f8b20d
+          title: SSC chain grows (Relayer pov)
+          condition: threshold
+          data:
+            - refId: ssc_chain_height
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: cosmos_relayer_chain_latest_height{job="Relayer", chain="pegasus-1"}
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: false
+                interval: ""
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: true
+                refId: ssc_chain_height
+                useBackend: false
+            - refId: ssc_chain_height_average
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: ssc_chain_height
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: mean
+                refId: ssc_chain_height_average
+                type: reduce
+            - refId: ssc_chain_height_last
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: ssc_chain_height
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: ssc_chain_height_last
+                type: reduce
+            - refId: threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: $ssc_chain_height_last - $ssc_chain_height_average <= 0
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: threshold
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: SSC chain height is not increasing
+          isPaused: false
+        - uid: ca661c98-4e9c-4f66-8b4b-45cf2deef95c
+          title: Osmosis chain grows (Relayer pov)
+          condition: threshold
+          data:
+            - refId: osmosis_chain_height
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: cosmos_relayer_chain_latest_height{job="Relayer", chain="osmo-test-5"}
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: false
+                interval: ""
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: true
+                refId: osmosis_chain_height
+                useBackend: false
+            - refId: osmosis_chain_height_average
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: osmosis_chain_height
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: mean
+                refId: osmosis_chain_height_average
+                type: reduce
+            - refId: osmosis_chain_height_last
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: osmosis_chain_height
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: osmosis_chain_height_last
+                type: reduce
+            - refId: threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: ${osmosis_chain_height_last} - ${osmosis_chain_height_average} <= 0
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: threshold
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: Osmosis chain height is not increasing
+          isPaused: false
+        - uid: e832d44c-cf0c-44da-82f4-2a19245d527c
+          title: SSC chain grows
+          condition: threshold
+          data:
+            - refId: ssc_chain_height
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: cometbft_consensus_latest_block_height{job="summary SSC"}
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: false
+                interval: ""
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: true
+                refId: ssc_chain_height
+                useBackend: false
+            - refId: ssc_chain_height_average
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: ssc_chain_height
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: mean
+                refId: ssc_chain_height_average
+                type: reduce
+            - refId: ssc_chain_height_last
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: ssc_chain_height
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: ssc_chain_height_last
+                type: reduce
+            - refId: threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: $ssc_chain_height_last - $ssc_chain_height_average <= 0
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: threshold
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: SSC chain height is not increasing
+          labels:
+            mute: "true"
+          isPaused: false
+        - uid: ca0a1097-fe7f-4b21-a5c1-ddc4e72709be
+          title: Missing validators
+          condition: threshold
+          data:
+            - refId: missing_validators
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: cometbft_consensus_missing_validators{job="summary SSC"}
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: missing_validators
+                useBackend: false
+            - refId: missing_validators_last
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: missing_validators
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: missing_validators_last
+                type: reduce
+            - refId: threshold
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: missing_validators_last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: threshold
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 15m
+          annotations:
+            summary: Missing validators detected
+          isPaused: false
+        - uid: ec432722-df0b-41d3-9264-65c7f533154e
+          title: Mempool size
+          condition: threshold
+          data:
+            - refId: mempool_size
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: cometbft_mempool_size{job="summary SSC"}
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: mempool_size
+                useBackend: false
+            - refId: mempool_size_last
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: mempool_size
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: mempool_size_last
+                type: reduce
+            - refId: threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 500
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: mempool_size_last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: threshold
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: Mempool size too large
+          isPaused: false
+        - uid: d25ca96d-2fa0-4c31-b176-76205d2e3a56
+          title: Block per second
+          condition: threshold
+          data:
+            - refId: blocks_per_second
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: rate(cometbft_consensus_block_interval_seconds_count{job="summary SSC"}[1m])
+                fullMetaSearch: false
+                includeNullMetadata: false
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: blocks_per_second
+                useBackend: false
+            - refId: blocks_per_second_last
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: blocks_per_second
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: blocks_per_second_last
+                type: reduce
+            - refId: threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.05
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: blocks_per_second_last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: threshold
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: Block time is too high
+          isPaused: false
+        - uid: cbe88878-0281-4662-8cae-507dfea26768
+          title: CPU time
+          condition: C
+          data:
+            - refId: cpu_time
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: rate(process_cpu_seconds_total{job="summary SSC"}[1m])
+                fullMetaSearch: false
+                includeNullMetadata: false
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: cpu_time
+                useBackend: false
+            - refId: cpu_time_last
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: cpu_time
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: cpu_time_last
+                type: reduce
+            - refId: C
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 3
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: cpu_time_last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: CPU load is too high
+          isPaused: false
+        - uid: fafcf965-33fd-43ae-a2d1-bbff22ac59d2
+          title: Memory usage
+          condition: C
+          data:
+            - refId: heap_inuse_mbytes
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: go_memstats_heap_inuse_bytes{job="summary SSC"} / 1048576
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: heap_inuse_mbytes
+                useBackend: false
+            - refId: heap_inuse_mbytes_last
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: heap_inuse_mbytes
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: heap_inuse_mbytes_last
+                type: reduce
+            - refId: C
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 8192
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: heap_inuse_mbytes_last
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: Memory usage is too high
+          isPaused: false
+        - uid: d3aa1b14-b939-4d22-a28b-ef36290f91cb
+          title: Node is active
+          condition: active_nodes_count_threshold
+          data:
+            - refId: active_nodes_count
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: sum(cosmos_validator_active{job="Validator extra stats"})
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: active_nodes_count
+                useBackend: false
+            - refId: active_nodes_count_threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 20
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: active_nodes_count
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: active_nodes_count_threshold
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: Inactive node detected
+          isPaused: false
+        - uid: b8fa5263-7259-4fa3-a147-0129f79477d4
+          title: Jailed validators
+          condition: jailed_validators_count_threshold
+          data:
+            - refId: jailed_validators_count
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: sum(cosmos_validator_jailed{job="Validator extra stats"})
+                fullMetaSearch: false
+                includeNullMetadata: false
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: jailed_validators_count
+                useBackend: false
+            - refId: jailed_validators_count_threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: jailed_validators_count
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: jailed_validators_count_threshold
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: Jailed validators detected
+          isPaused: false
