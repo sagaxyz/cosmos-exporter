@@ -185,7 +185,7 @@ groups:
               model:
                 disableTextWrap: false
                 editorMode: builder
-                expr: cosmos_relayer_chain_latest_height{job="Relayer", chain="pegasus-1"}
+                expr: cosmos_relayer_chain_latest_height{job="Relayer", chain="ssc-testnet-1"}
                 fullMetaSearch: false
                 includeNullMetadata: true
                 instant: false
@@ -1054,4 +1054,204 @@ groups:
           for: 5m
           annotations:
             summary: Jailed validators detected
+          isPaused: false
+        - uid: d9651478-52ea-4354-afd7-1b3d435c38de
+          title: Axelar chain grows (Relayer pov)
+          condition: threshold
+          data:
+            - refId: osmosis_chain_height
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: cosmos_relayer_chain_latest_height{job="Relayer", chain="axelar-testnet-lisbon-3"}
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: false
+                interval: ""
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: true
+                refId: osmosis_chain_height
+                useBackend: false
+            - refId: osmosis_chain_height_average
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: osmosis_chain_height
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: mean
+                refId: osmosis_chain_height_average
+                type: reduce
+            - refId: osmosis_chain_height_last
+              relativeTimeRange:
+                from: 60
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: osmosis_chain_height
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: osmosis_chain_height_last
+                type: reduce
+            - refId: threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: ${osmosis_chain_height_last} - ${osmosis_chain_height_average} <= 0
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: threshold
+                type: math
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: Osmosis chain height is not increasing
+          isPaused: false
+        - uid: baff21d0-baea-486c-977c-405c558d275a
+          title: Axelar relayer wallet balance is positive (copy)
+          condition: threshold
+          data:
+            - refId: osmosis_relayer_wallet_balance
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: d420fb3b-63c6-40ec-81a1-ed74f818d1c8
+              model:
+                disableTextWrap: false
+                editorMode: builder
+                expr: cosmos_relayer_wallet_balance{job="Relayer", chain="axelar-testnet-lisbon-3"}
+                fullMetaSearch: false
+                includeNullMetadata: true
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: osmosis_relayer_wallet_balance
+                useBackend: false
+            - refId: osmosis_relayer_wallet_balance_last_value
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: osmosis_relayer_wallet_balance
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: osmosis_relayer_wallet_balance_last_value
+                type: reduce
+            - refId: threshold
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: osmosis_relayer_wallet_balance_last_value
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: threshold
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            summary: Osmosis relayer wallet balance is zero
           isPaused: false
