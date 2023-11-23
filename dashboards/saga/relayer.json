@@ -86,7 +86,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 9,
+      "id": 11,
       "options": {
         "legend": {
           "calcs": [],
@@ -107,7 +107,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "cosmos_relayer_chain_latest_height{job=\"Relayer\", chain=\"osmo-test-5\"}",
+          "expr": "cosmos_relayer_wallet_balance{chain=\"axelar-testnet-lisbon-3\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -117,7 +117,7 @@
           "useBackend": false
         }
       ],
-      "title": "Osmosis chain height",
+      "title": "Axelar wallet balance (uaxl)",
       "type": "timeseries"
     },
     {
@@ -215,7 +215,7 @@
           "useBackend": false
         }
       ],
-      "title": "Osmosis wallet balance",
+      "title": "Osmosis wallet balance (uosmo)",
       "type": "timeseries"
     },
     {
@@ -282,7 +282,7 @@
         "x": 0,
         "y": 8
       },
-      "id": 7,
+      "id": 10,
       "options": {
         "legend": {
           "calcs": [],
@@ -303,7 +303,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "cosmos_relayer_chain_latest_height{chain=\"pegasus-1\"}",
+          "expr": "cosmos_relayer_chain_latest_height{chain=\"axelar-testnet-lisbon-3\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -313,7 +313,7 @@
           "useBackend": false
         }
       ],
-      "title": "Pegasus chain height",
+      "title": "Axelar chain height",
       "type": "timeseries"
     },
     {
@@ -379,6 +379,202 @@
         "w": 12,
         "x": 12,
         "y": 8
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "d420fb3b-63c6-40ec-81a1-ed74f818d1c8"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "cosmos_relayer_chain_latest_height{job=\"Relayer\", chain=\"osmo-test-5\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Osmosis chain height",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "d420fb3b-63c6-40ec-81a1-ed74f818d1c8"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "d420fb3b-63c6-40ec-81a1-ed74f818d1c8"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "cosmos_relayer_chain_latest_height{chain=\"ssc-testnet-1\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "SSC chain height",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "d420fb3b-63c6-40ec-81a1-ed74f818d1c8"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
       },
       "id": 3,
       "options": {
@@ -476,7 +672,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 24
       },
       "id": 8,
       "options": {
@@ -574,7 +770,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 24
       },
       "id": 1,
       "options": {
@@ -672,7 +868,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 32
       },
       "id": 5,
       "options": {
@@ -770,7 +966,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 32
       },
       "id": 4,
       "options": {
@@ -822,6 +1018,6 @@
   "timezone": "",
   "title": "Relayer dashboard",
   "uid": "fb020006-8245-43de-b0c0-f53a65e181a7",
-  "version": 10,
+  "version": 11,
   "weekStart": ""
 }
