@@ -169,3 +169,8 @@ In theory, it should work on a Cosmos-based blockchains with cosmos-sdk >= 0.40.
 ## How can I contribute?
 
 Bug reports and feature requests are always welcome! If you want to contribute, feel free to open issues or PRs.
+
+## Testing locally with SagaOS (modify chainlet name and denom accordingly):
+- Forward grpc port: `kubectl port-forward deployments/chainlet 9090:9090 -n saga-metricschain-1706887893989305-1 --kubeconfig ~/.kube/staging-ss1`
+- Run `cosmos-exporter`: `./cosmos-exporter --bech-account-prefix saga --bech-account-pubkey-prefix=sagapub --bech-consensus-node-prefix=sagavalcons --bech-consensus-node-pubkey-prefix=sagavalconspub --bech-validator-prefix=sagavaloper --bech-validator-pubkey-prefix=sagavaloperpub --denom mtr --node localhost:9090`
+- Test it: `curl localhost:9300/metrics/validators`
