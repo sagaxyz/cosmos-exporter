@@ -362,7 +362,7 @@ func ValidatorsHandler(w http.ResponseWriter, r *http.Request, grpcConn *grpc.Cl
 	h.ServeHTTP(w, r)
 	sublogger.Info().
 		Str("method", "GET").
-		Str("endpoint", "/metrics/validators").
+		Str("endpoint", "/metrics").
 		Float64("request-time", time.Since(requestStart).Seconds()).
 		Msg("Request processed")
 }
