@@ -12,6 +12,13 @@ all: build
 build:
 	CGO_ENABLED=$(CGO_ENABLED) go build $(BUILD_ARGS) -o build/cosmos-exporter
 
+.PHONY: start
+start:
+	build/cosmos-exporter
+
+.PHONY: run
+run: build start
+
 .PHONY: clean
 clean:
 	rm -rf build/*
