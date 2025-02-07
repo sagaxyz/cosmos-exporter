@@ -12,6 +12,9 @@ import (
 	querytypes "github.com/cosmos/cosmos-sdk/types/query"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	ibcclienttypes "github.com/cosmos/ibc-go/v3/modules/core/02-client/types"
+	ibcconnectiontypes "github.com/cosmos/ibc-go/v3/modules/core/03-connection/types"
+	ibcchanneltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
 	"github.com/google/uuid"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -109,6 +112,33 @@ func ValidatorsHandler(w http.ResponseWriter, r *http.Request, grpcConn *grpc.Cl
 		[]string{"address", "moniker"},
 	)
 
+	ibcChannelsGauge := prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name:        "cosmos_ibc_channels",
+			Help:        "IBC channels opened by the validator",
+			ConstLabels: ConstLabels,
+		},
+		[]string{"channel_id", "counterparty_channel_id", "status"},
+	)
+
+	ibcConnectionsGauge := prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name:        "cosmos_ibc_connections",
+			Help:        "IBC connections opened by the validator",
+			ConstLabels: ConstLabels,
+		},
+		[]string{"connection_id", "client_id", "counterparty_client_id", "counterparty_connection_id", "state"},
+	)
+
+	ibcClientsGauge := prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name:        "cosmos_ibc_clients",
+			Help:        "IBC clients created by the validator",
+			ConstLabels: ConstLabels,
+		},
+		[]string{"client_id", "status"},
+	)
+
 	registry := prometheus.NewRegistry()
 	registry.MustRegister(validatorsCommissionGauge)
 	registry.MustRegister(validatorsStatusGauge)
@@ -119,6 +149,9 @@ func ValidatorsHandler(w http.ResponseWriter, r *http.Request, grpcConn *grpc.Cl
 	registry.MustRegister(validatorsMissedBlocksGauge)
 	registry.MustRegister(validatorsRankGauge)
 	registry.MustRegister(validatorsIsActiveGauge)
+	registry.MustRegister(ibcChannelsGauge)
+	registry.MustRegister(ibcConnectionsGauge)
+	registry.MustRegister(ibcClientsGauge)
 
 	var validators []stakingtypes.Validator
 	var signingInfos []slashingtypes.ValidatorSigningInfo
@@ -207,6 +240,125 @@ func ValidatorsHandler(w http.ResponseWriter, r *http.Request, grpcConn *grpc.Cl
 			Float64("request-time", time.Since(queryStart).Seconds()).
 			Msg("Finished querying staking params")
 		validatorSetLength = paramsResponse.Params.MaxValidators
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		sublogger.Debug().Msg("Started querying ibc channels")
+		queryStart := time.Now()
+
+		ibcClient := ibcchanneltypes.NewQueryClient(grpcConn)
+		channelsResponse, err := ibcClient.Channels(
+			context.Background(),
+			&ibcchanneltypes.QueryChannelsRequest{
+				Pagination: &querytypes.PageRequest{
+					Limit: Limit,
+				},
+			},
+		)
+		if err != nil {
+			sublogger.Error().
+				Err(err).
+				Msg("Could not get IBC channels")
+			return
+		}
+
+		sublogger.Debug().
+			Float64("request-time", time.Since(queryStart).Seconds()).
+			Msg("Finished querying IBC channels")
+
+		for _, channel := range channelsResponse.Channels {
+			ibcChannelsGauge.With(prometheus.Labels{
+				"channel_id":              channel.ChannelId,
+				"counterparty_channel_id": channel.Counterparty.ChannelId,
+				"status":                  channel.State.String(),
+			}).Set(1)
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		sublogger.Debug().Msg("Started querying ibc connections")
+		queryStart := time.Now()
+
+		ibcClient := ibcconnectiontypes.NewQueryClient(grpcConn)
+		connectionsResponse, err := ibcClient.Connections(
+			context.Background(),
+			&ibcconnectiontypes.QueryConnectionsRequest{
+				Pagination: &querytypes.PageRequest{
+					Limit: Limit,
+				},
+			},
+		)
+		if err != nil {
+			sublogger.Error().
+				Err(err).
+				Msg("Could not get IBC connections")
+			return
+		}
+
+		sublogger.Debug().
+			Float64("request-time", time.Since(queryStart).Seconds()).
+			Msg("Finished querying IBC connections")
+
+		for _, connection := range connectionsResponse.Connections {
+			ibcConnectionsGauge.With(prometheus.Labels{
+				"connection_id":              connection.Id,
+				"client_id":                  connection.ClientId,
+				"counterparty_client_id":     connection.Counterparty.ClientId,
+				"counterparty_connection_id": connection.Counterparty.ConnectionId,
+				"state":                      connection.State.String(),
+			}).Set(1)
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		sublogger.Debug().Msg("Started querying ibc clients")
+		queryStart := time.Now()
+
+		ibcClient := ibcclienttypes.NewQueryClient(grpcConn)
+		clientsResponse, err := ibcClient.ClientStates(
+			context.Background(),
+			&ibcclienttypes.QueryClientStatesRequest{
+				Pagination: &querytypes.PageRequest{
+					Limit: Limit,
+				},
+			},
+		)
+		if err != nil {
+			sublogger.Error().
+				Err(err).
+				Msg("Could not get IBC clients")
+			return
+		}
+
+		sublogger.Debug().
+			Float64("request-time", time.Since(queryStart).Seconds()).
+			Msg("Finished querying IBC clients")
+
+		for _, client := range clientsResponse.ClientStates {
+			clientStatusResponse, err := ibcClient.ClientStatus(
+				context.Background(),
+				&ibcclienttypes.QueryClientStatusRequest{
+					ClientId: client.ClientId,
+				},
+			)
+			if err != nil {
+				sublogger.Error().
+					Err(err).
+					Msg("Could not get IBC client state")
+				return
+			}
+
+			ibcClientsGauge.With(prometheus.Labels{
+				"client_id": client.ClientId,
+				"status":    clientStatusResponse.Status,
+			}).Set(1)
+		}
 	}()
 
 	wg.Wait()
